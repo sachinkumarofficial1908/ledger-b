@@ -38,7 +38,12 @@ export function setAuthCookies(res, accessToken, refreshToken) {
   res.cookie("refreshToken", refreshToken, refreshCookieOptions);
 }
 
+function clearOptions(options) {
+  const { maxAge, ...rest } = options;
+  return rest;
+}
+
 export function clearAuthCookies(res) {
-  res.clearCookie("accessToken", { path: "/" });
-  res.clearCookie("refreshToken", { path: "/api/auth" });
+  res.clearCookie("accessToken", clearOptions(accessCookieOptions));
+  res.clearCookie("refreshToken", clearOptions(refreshCookieOptions));
 }

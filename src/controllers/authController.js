@@ -82,6 +82,7 @@ export const logout = asyncHandler(async (req, res) => {
     }
   }
   clearAuthCookies(res);
+  res.set("Clear-Site-Data", '"cookies"');
   res.json({ success: true, message: "Logged out." });
 });
 
@@ -130,5 +131,6 @@ export const changePassword = asyncHandler(async (req, res) => {
   await user.save();
 
   clearAuthCookies(res);
+  res.set("Clear-Site-Data", '"cookies"');
   res.json({ success: true, message: "Password changed. Please log in again." });
 });
