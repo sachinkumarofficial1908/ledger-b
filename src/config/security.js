@@ -1,5 +1,5 @@
 import { logger } from "../utils/logger.js";
-import { env } from "./env.js";
+import { env, usesHttpsOrigin } from "./env.js";
 
 export function getAllowedOrigins(rawOrigins = env.CORS_ORIGIN) {
   if (!rawOrigins) return [];
@@ -23,7 +23,7 @@ export function getCorsOriginHandler(allowedOrigins = getAllowedOrigins()) {
   };
 }
 
-export function getCookieOptions({ isProd = env.isProduction, path = "/", maxAge }) {
+export function getCookieOptions({ isProd = env.isProduction || usesHttpsOrigin, path = "/", maxAge }) {
   return {
     httpOnly: true,
     secure: isProd,

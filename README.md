@@ -90,7 +90,8 @@ valid `accessToken` cookie, set automatically on login.
 - Helmet, locked-down CORS, `express-mongo-sanitize`, `hpp`, response compression
 - Global + login-specific rate limiting; account lockout after 5 failed logins (15 min)
 - JWT access (15m) + refresh (7d) tokens in httpOnly cookies; production uses
-  `Secure` + `SameSite=None` for hosted cross-site frontend/backend sessions, and refresh
+  `Secure` + `SameSite=None` for hosted cross-site frontend/backend sessions. The backend
+  also enables those cookie flags when `CORS_ORIGIN` is an HTTPS URL, and refresh
   tokens are versioned so logout/password-change instantly invalidates old sessions
 - bcrypt password hashing (cost factor 12); passwords/tokens are never logged
 - Role-based access control (`super_admin` / `admin`) plus per-admin client assignment

@@ -26,6 +26,10 @@ export const env = Object.freeze({
   RATE_LIMIT_MAX_REQUESTS: numberFromEnv(process.env.RATE_LIMIT_MAX_REQUESTS, DEFAULT_RATE_LIMIT_MAX_REQUESTS),
 });
 
+export const usesHttpsOrigin = Boolean(
+  env.CORS_ORIGIN?.split(",").some((origin) => origin.trim().startsWith("https://"))
+);
+
 export function validateEnv() {
   const required = ["MONGO_URI", "JWT_ACCESS_SECRET", "JWT_REFRESH_SECRET", "COOKIE_SECRET", "CORS_ORIGIN"];
   const missing = required.filter((key) => !process.env[key]);
