@@ -1,6 +1,7 @@
 import { logger } from "../utils/logger.js";
+import { env } from "./env.js";
 
-export function getAllowedOrigins(rawOrigins = process.env.CORS_ORIGIN) {
+export function getAllowedOrigins(rawOrigins = env.CORS_ORIGIN) {
   if (!rawOrigins) return [];
 
   return rawOrigins
@@ -18,11 +19,11 @@ export function getCorsOriginHandler(allowedOrigins = getAllowedOrigins()) {
       return;
     }
 
-    callback(new Error(`Origin ${origin} is not allowed by CORS`));
+    callback(new Error("Request origin is not allowed by CORS"));
   };
 }
 
-export function getCookieOptions({ isProd = process.env.NODE_ENV === "production", path = "/", maxAge }) {
+export function getCookieOptions({ isProd = env.isProduction, path = "/", maxAge }) {
   return {
     httpOnly: true,
     secure: isProd,
@@ -33,10 +34,10 @@ export function getCookieOptions({ isProd = process.env.NODE_ENV === "production
 }
 
 export function getCookieSecret() {
-  const secret = process.env.COOKIE_SECRET || process.env.JWT_ACCESS_SECRET;
+  const secret = env.COOKIE_SECRET;
   if (!secret) {
-    if (process.env.NODE_ENV === "production") {
-      throw new Error("COOKIE_SECRET or JWT_ACCESS_SECRET must be set in production.");
+    if (env.isProduction) {
+      throw new Error("COOKIE_SECRET must be set in production.");
     }
     logger.warn("COOKIE_SECRET is not set. Falling back to a development-only secret.");
     return "development-cookie-secret";

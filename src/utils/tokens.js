@@ -1,36 +1,34 @@
 import jwt from "jsonwebtoken";
 import { getCookieOptions } from "../config/security.js";
+import { env } from "../config/env.js";
 
 export function signAccessToken(user) {
   return jwt.sign(
     { sub: user._id.toString(), role: user.role },
-    process.env.JWT_ACCESS_SECRET,
-    { expiresIn: process.env.JWT_ACCESS_EXPIRES_IN || "15m" }
+    env.JWT_ACCESS_SECRET,
+    { expiresIn: env.JWT_ACCESS_EXPIRES_IN }
   );
 }
 
 export function signRefreshToken(user) {
   return jwt.sign(
     { sub: user._id.toString(), tokenVersion: user.tokenVersion || 0 },
-    process.env.JWT_REFRESH_SECRET,
-    { expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || "7d" }
+    env.JWT_REFRESH_SECRET,
+    { expiresIn: env.JWT_REFRESH_EXPIRES_IN }
   );
 }
 
 export function verifyAccessToken(token) {
-  return jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+  return jwt.verify(token, env.JWT_ACCESS_SECRET);
 }
 
 export function verifyRefreshToken(token) {
-  return jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+  return jwt.verify(token, env.JWT_REFRESH_SECRET);
 }
 
-const isProd = process.env.NODE_ENV === "production";
-
-export const accessCookieOptions = getCookieOptions({ isProd, path: "/", maxAge: 15 * 60 * 1000 });
+export const accessCookieOptions = getCookieOptions({ path: "/", maxAge: 15 * 60 * 1000 });
 
 export const refreshCookieOptions = getCookieOptions({
-  isProd,
   path: "/api/auth", // only sent to auth routes (refresh/logout)
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 });

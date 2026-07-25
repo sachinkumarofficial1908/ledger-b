@@ -1,20 +1,15 @@
 import mongoose from "mongoose";
+import { env } from "./env.js";
 import { logger } from "../utils/logger.js";
 
 export async function connectDB() {
-  const uri = process.env.MONGO_URI;
-  if (!uri) {
-    logger.error("MONGO_URI is not set in the environment");
-    process.exit(1);
-  }
-
   mongoose.set("strictQuery", true);
 
   try {
-    await mongoose.connect(uri);
+    await mongoose.connect(env.MONGO_URI);
     logger.info("MongoDB connected");
   } catch (err) {
-    logger.error(`MongoDB connection failed: ${err.message}`);
+    logger.error("MongoDB connection failed");
     process.exit(1);
   }
 

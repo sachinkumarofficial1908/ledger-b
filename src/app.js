@@ -5,11 +5,9 @@ import cookieParser from "cookie-parser";
 import mongoSanitize from "express-mongo-sanitize";
 import hpp from "hpp";
 import compression from "compression";
-import morgan from "morgan";
 
 import { apiLimiter } from "./middleware/rateLimiters.js";
 import { notFoundHandler, errorHandler } from "./middleware/errorHandler.js";
-import { logger } from "./utils/logger.js";
 import { getAllowedOrigins, getCorsOriginHandler, getCookieSecret } from "./config/security.js";
 
 import authRoutes from "./routes/authRoutes.js";
@@ -44,12 +42,6 @@ app.use(mongoSanitize());
 app.use(hpp());
 app.use(apiLimiter);
 app.use(compression());
-
-app.use(
-  morgan("combined", {
-    stream: { write: (msg) => logger.info(msg.trim()) },
-  })
-);
 
 // ---- Health check ----
 app.get("/api/health", (req, res) => {

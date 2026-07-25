@@ -2,22 +2,19 @@ import { logger } from "../utils/logger.js";
 import { ApiError } from "../utils/ApiError.js";
 
 export function notFoundHandler(req, res, next) {
-  next(new ApiError(404, `Route not found: ${req.method} ${req.originalUrl}`));
+  next(new ApiError(404, "Route not found."));
 }
 
 // eslint-disable-next-line no-unused-vars
 export function errorHandler(err, req, res, next) {
   const isApiError = err instanceof ApiError;
   const statusCode = isApiError ? err.statusCode : 500;
+  const requestLabel = `${req.method} ${req.path || "/"}`;
 
-  // Expected client errors (not logged in yet, bad input, etc.) are normal
-  // traffic, not incidents — logging them at "error" level buries real
-  // problems in noise and makes a healthy server look like it's crashing.
-  // Only 5xx (unexpected/unhandled) gets the loud log + full stack trace.
   if (statusCode >= 500) {
-    logger.error(`${req.method} ${req.originalUrl} -> ${err.message}`, { stack: err.stack });
+    logger.error(`${requestLabel} -> ${err.message}`);
   } else {
-    logger.debug(`${req.method} ${req.originalUrl} -> ${statusCode} ${err.message}`);
+    logger.debug(`${requestLabel} -> ${statusCode} ${err.message}`);
   }
 
   res.status(statusCode).json({
