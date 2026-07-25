@@ -40,7 +40,6 @@ const purchaseOrderSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-purchaseOrderSchema.index({ poNumber: 1 });
 purchaseOrderSchema.index({ vendorName: "text", poNumber: "text" });
 
 export default mongoose.model("PurchaseOrder", purchaseOrderSchema);

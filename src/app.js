@@ -10,6 +10,7 @@ import morgan from "morgan";
 import { apiLimiter } from "./middleware/rateLimiters.js";
 import { notFoundHandler, errorHandler } from "./middleware/errorHandler.js";
 import { logger } from "./utils/logger.js";
+import { getAllowedOrigins, getCorsOriginHandler, getCookieSecret } from "./config/security.js";
 
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
@@ -26,16 +27,19 @@ app.set("trust proxy", 1);
 // ---- Security middleware, in the recommended order ----
 app.use(helmet());
 
+const allowedOrigins = getAllowedOrigins();
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN,
+    origin: getCorsOriginHandler(allowedOrigins),
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "Idempotency-Key"],
   })
 );
 
 app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true, limit: "10kb" }));
-app.use(cookieParser(process.env.COOKIE_SECRET));
+app.use(cookieParser(getCookieSecret()));
 app.use(mongoSanitize());
 app.use(hpp());
 app.use(apiLimiter);

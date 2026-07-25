@@ -13,12 +13,18 @@
  *   ADMIN_NAME, ADMIN_EMAIL, ADMIN_PASSWORD, MONGO_URI
  */
 
-import "dotenv/config";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import dotenv from "dotenv";
 import mongoose from "mongoose";
 import readline from "node:readline/promises";
 import { stdin as input, stdout as output } from "node:process";
 import User from "../models/User.js";
 import { logger } from "../utils/logger.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 
 const MIN_PASSWORD_LENGTH = 8;
 

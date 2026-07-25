@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import { getCookieOptions } from "../config/security.js";
 
 export function signAccessToken(user) {
   return jwt.sign(
@@ -26,20 +27,13 @@ export function verifyRefreshToken(token) {
 
 const isProd = process.env.NODE_ENV === "production";
 
-export const accessCookieOptions = {
-  httpOnly: true,
-  secure: isProd,
-  sameSite: "strict",
-  maxAge: 15 * 60 * 1000, // 15 minutes
-};
+export const accessCookieOptions = getCookieOptions({ isProd, path: "/", maxAge: 15 * 60 * 1000 });
 
-export const refreshCookieOptions = {
-  httpOnly: true,
-  secure: isProd,
-  sameSite: "strict",
+export const refreshCookieOptions = getCookieOptions({
+  isProd,
   path: "/api/auth", // only sent to auth routes (refresh/logout)
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-};
+});
 
 export function setAuthCookies(res, accessToken, refreshToken) {
   res.cookie("accessToken", accessToken, accessCookieOptions);

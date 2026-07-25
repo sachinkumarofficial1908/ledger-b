@@ -13,11 +13,17 @@
  *        npm run reconcile -- --dry  (report only, no writes)
  */
 
-import "dotenv/config";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import dotenv from "dotenv";
 import mongoose from "mongoose";
 import Client from "../models/Client.js";
 import Transaction from "../models/Transaction.js";
 import { logger } from "../utils/logger.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 
 const dryRun = process.argv.includes("--dry");
 
