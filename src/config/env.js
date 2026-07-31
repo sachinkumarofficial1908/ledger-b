@@ -24,6 +24,8 @@ export const env = Object.freeze({
   CORS_ORIGIN: process.env.CORS_ORIGIN,
   RATE_LIMIT_WINDOW_MS: numberFromEnv(process.env.RATE_LIMIT_WINDOW_MS, DEFAULT_RATE_LIMIT_WINDOW_MS),
   RATE_LIMIT_MAX_REQUESTS: numberFromEnv(process.env.RATE_LIMIT_MAX_REQUESTS, DEFAULT_RATE_LIMIT_MAX_REQUESTS),
+  ILOVEPDF_PUBLIC_KEY: process.env.ILOVEPDF_PUBLIC_KEY,
+  ILOVEPDF_SECRET_KEY: process.env.ILOVEPDF_SECRET_KEY,
 });
 
 export const usesHttpsOrigin = Boolean(

@@ -15,6 +15,11 @@ const clientSchema = new mongoose.Schema(
     paidByOptions: { type: [String], default: [] },
     paidToOptions: { type: [String], default: [] },
 
+    // Optional savings/collection target for this client — purely a display
+    // aid for the Overview page's goal-progress widget. Never read by the
+    // balance virtual or any ledger delta math.
+    goalAmount: { type: Number, default: 0, min: 0 },
+
     // Denormalized running totals — updated atomically (via $inc) on every transaction
     // write instead of being recomputed by aggregation on every read. At a few dozen
     // transactions the aggregation approach is fine; once a site has thousands of

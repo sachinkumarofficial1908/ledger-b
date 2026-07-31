@@ -12,6 +12,7 @@ export const createClientRules = [
   body("paidByOptions.*").optional().isString().trim().isLength({ min: 1, max: 150 }),
   body("paidToOptions").optional().isArray(),
   body("paidToOptions.*").optional().isString().trim().isLength({ min: 1, max: 150 }),
+  body("goalAmount").optional().isFloat({ min: 0 }),
 ];
 
 export const updateClientRules = [
@@ -25,4 +26,5 @@ export const updateClientRules = [
   body("paidByOptions.*").optional().isString().trim().isLength({ min: 1, max: 150 }),
   body("paidToOptions").optional().isArray(),
   body("paidToOptions.*").optional().isString().trim().isLength({ min: 1, max: 150 }),
+  body("goalAmount").optional().isFloat({ min: 0 }),
 ];

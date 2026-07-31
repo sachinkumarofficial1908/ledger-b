@@ -1,7 +1,10 @@
+import ILovePDFApi from "@ilovepdf/ilovepdf-nodejs";
+import ILovePDFFile from "@ilovepdf/ilovepdf-nodejs/ILovePDFFile.js";
 import PurchaseOrder from "../models/PurchaseOrder.js";
 import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { recordAudit } from "../utils/audit.js";
+import { env } from "../config/env.js";
 
 function normalizeItems(items = []) {
   return (items || []).map((item) => {
@@ -132,6 +135,36 @@ export const deletePurchaseOrder = asyncHandler(async (req, res) => {
   });
 
   res.json({ success: true, message: "Purchase order moved to trash." });
+});
+
+// Converts a client-generated purchase order .docx into a PDF via the iLovePDF
+// API, so the download matches the DOCX exactly instead of a separately
+// hand-rolled PDF layout. The DOCX bytes arrive as a raw request body
+// (see the express.raw() middleware on this route).
+export const convertPurchaseOrderDocxToPdf = asyncHandler(async (req, res) => {
+  if (!Buffer.isBuffer(req.body) || !req.body.length) {
+    throw new ApiError(400, "No DOCX file was received.");
+  }
+  if (!env.ILOVEPDF_PUBLIC_KEY || !env.ILOVEPDF_SECRET_KEY) {
+    throw new ApiError(500, "PDF conversion is not configured on the server.");
+  }
+
+  const ilovepdf = new ILovePDFApi(env.ILOVEPDF_PUBLIC_KEY, env.ILOVEPDF_SECRET_KEY);
+  const task = ilovepdf.newTask("officepdf");
+
+  let pdfData;
+  try {
+    await task.start();
+    await task.addFile(ILovePDFFile.fromArray(req.body, "purchase-order.docx"));
+    await task.process();
+    pdfData = await task.download();
+  } catch (err) {
+    throw new ApiError(502, "PDF conversion failed. Please try again.", err.message);
+  }
+
+  res.set("Content-Type", "application/pdf");
+  res.set("Content-Disposition", 'attachment; filename="purchase-order.pdf"');
+  res.send(Buffer.from(pdfData));
 });
 
 export const restorePurchaseOrder = asyncHandler(async (req, res) => {
